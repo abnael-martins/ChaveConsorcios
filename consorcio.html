@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -18,7 +18,25 @@
   <meta property="og:url" content="https://abnael-martins.github.io/ChaveConsórcios/consorcio.html">
   <meta property="og:image" content="https://abnael-martins.github.io/ChaveConsórcios/diversos-bens.png">
   <meta name="twitter:card" content="summary_large_image">
-  
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '10202598127378950');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -1647,6 +1665,9 @@
         });
     }
 
+    // Verifica se o usuário veio do WhatsApp (?origem=zap)
+    const veioDoZap = new URLSearchParams(window.location.search).get('origem') === 'zap';
+
     function atualizarSimulacao() {
         const containerCards = document.getElementById('container-cards-resultado');
         containerCards.innerHTML = '';
@@ -1663,7 +1684,12 @@
             const card = document.createElement('div');
             card.className = `card-cota ${opt.badgeClass === 'badge-rapido' ? 'destaque' : ''}`;
 
-            let textoWhatsapp = `Olá! Fiz uma simulação pelo site no *Consórcio Maggi*:\n` +
+            // Texto inicial: continuação de conversa se veio do WhatsApp, senão padrão do site
+            let textoWhatsapp = veioDoZap
+                ? `Abnael, acabei de vir do nosso atendimento no WhatsApp e fiz a simulação no site no *Consórcio Maggi*:\n`
+                : `Olá! Fiz uma simulação pelo site no *Consórcio Maggi*:\n`;
+
+            textoWhatsapp +=
                 `• *Modalidade:* ${categoriaAtual === 'imóveis' ? 'Imobiliário' : 'veículos (BYD)'}\n` +
                 `• *Grupo:* ${opt.grupo}\n` +
                 `• *Crédito:* ${formatarBRL(opt.CréditoBruto)}\n` +
@@ -1701,7 +1727,7 @@
                     ${opt.obs ? `<div class="card-nota-rodape">ℹ️ ${opt.obs}</div>` : ''}
                 </div>
 
-                <a href="${linkWa}" target="_blank" class="btn-whatsapp-sim">
+                <a href="${linkWa}" target="_blank" class="btn-whatsapp-sim" onclick="fbq('track', 'Lead');">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.758.459 3.474 1.33 4.988l-1.413 5.165 5.286-1.385c1.458.796 3.1 1.216 4.782 1.217h.004c5.506 0 9.99-4.478 9.99-9.985 0-2.667-2.133-5.172-3.985-7.037-1.85-1.864-4.354-2.947-7.004-2.947zm0 1.62c2.233 0 4.332.87 5.912 2.451 1.58 1.581 2.45 3.68 2.45 5.913 0 4.615-3.754 8.369-8.369 8.369-1.503 0-2.972-.405-4.249-1.17l-.305-.185-3.155.825.84-3.076-.202-.321c-.84-1.335-1.285-2.883-1.285-4.442 0-4.615 3.755-8.369 8.363-8.369z"/></svg>
                     Solicitar este Grupo
                 </a>
@@ -1812,7 +1838,3 @@
 
 </body>
 </html>
-
-
-
-

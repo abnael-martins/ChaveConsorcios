@@ -18,7 +18,25 @@
   <meta property="og:url" content="https://abnael-martins.github.io/ChaveConsórcios/">
   <meta property="og:image" content="https://abnael-martins.github.io/ChaveConsórcios/diversos-bens.png">
   <meta name="twitter:card" content="summary_large_image">
-  
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '10202598127378950');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -572,6 +590,24 @@
   </footer>
 
   <!-- JavaScript do player removido: o iframe do YouTube gerencia seus próprios controles -->
+
+  <script>
+    // Verifica se o usuário veio do WhatsApp (?origem=zap)
+    const veioDoZap = new URLSearchParams(window.location.search).get('origem') === 'zap';
+
+    // Adiciona evento de Lead nos links do WhatsApp e ajusta a mensagem quando vier do zap
+    document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+      // Dispara o evento de Lead no Pixel ao clicar
+      link.addEventListener('click', () => {
+        if (typeof fbq === 'function') fbq('track', 'Lead');
+      });
+
+      // Se veio do WhatsApp, ajusta as mensagens padrão para linguagem de continuação
+      if (veioDoZap && link.href.indexOf('text=') !== -1) {
+        // Se o link já tem texto, apenas não altera - os textos padrão são simples o suficiente
+      }
+    });
+  </script>
 
 </body>
 </html>

@@ -18,6 +18,25 @@
 <meta property="og:url" content="https://abnael-martins.github.io/ChaveConsórcios/cartas.html">
 <meta property="og:image" content="https://abnael-martins.github.io/ChaveConsórcios/diversos-bens.png">
 <meta name="twitter:card" content="summary_large_image">
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '10202598127378950');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -719,6 +738,9 @@
     });
   });
 
+  // Verifica se o usuário veio do WhatsApp (?origem=zap)
+  const veioDoZap = new URLSearchParams(window.location.search).get('origem') === 'zap';
+
   const form = document.getElementById('simForm');
   const successMsg = document.getElementById('successMsg');
   if (form) {
@@ -729,14 +751,22 @@
       const tipo = document.getElementById('tipo').value;
       const valor = document.getElementById('valor').value.trim();
       successMsg.classList.add('show');
-      const msg = `Olá! Meu nome é ${nome}. Quero simular um consórcio de ${tipo}${valor ? ' no valor de ' + valor : ''}. Meu WhatsApp: ${whats}`;
+      // Dispara evento de Lead no Pixel
+      if (typeof fbq === 'function') fbq('track', 'Lead');
+      const msg = veioDoZap
+        ? `Abnael, acabei de vir do nosso atendimento no WhatsApp e quero simular um consórcio de ${tipo}${valor ? ' no valor de ' + valor : ''}. Meu WhatsApp: ${whats}`
+        : `Olá! Meu nome é ${nome}. Quero simular um consórcio de ${tipo}${valor ? ' no valor de ' + valor : ''}. Meu WhatsApp: ${whats}`;
       const waLink = `https://wa.me/5517996482578?text=${encodeURIComponent(msg)}`;
       successMsg.innerHTML = 'Recebemos seus dados! <a href="' + waLink + '" target="_blank" rel="noopener" style="color:var(--brass-light); text-decoration:underline;">Clique aqui para continuar no WhatsApp</a>.';
     });
   }
   
   window.negociarúnica = function(id, categoria, Crédito, entrada) {
-      let texto = `*Olá!* Estava a navegar no site e tenho interesse na carta única abaixo:\n\n🔹 *ID:* ${id} (${categoria})\n💰 *Crédito:* ${Crédito}\n💸 *Entrada:* ${entrada}\n\nAinda está disponível para negócio?`;
+      // Dispara evento de Lead no Pixel
+      if (typeof fbq === 'function') fbq('track', 'Lead');
+      let texto = veioDoZap
+        ? `Abnael, acabei de vir do nosso atendimento no WhatsApp e tenho interesse na carta única abaixo:\n\n🔹 *ID:* ${id} (${categoria})\n💰 *Crédito:* ${Crédito}\n💸 *Entrada:* ${entrada}\n\nAinda está disponível para negócio?`
+        : `*Olá!* Estava a navegar no site e tenho interesse na carta única abaixo:\n\n🔹 *ID:* ${id} (${categoria})\n💰 *Crédito:* ${Crédito}\n💸 *Entrada:* ${entrada}\n\nAinda está disponível para negócio?`;
       window.open(`https://wa.me/${SEU_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
   }
 
