@@ -554,6 +554,55 @@ window.enviarPacote = function() {
 // =====================================================================
 renderTabela();
 </script>
+
+<!-- =========================================================== -->
+<!-- DISPARO GLOBAL DE EVENTO 'LEAD' NO META PIXEL               -->
+<!-- Monitora cliques em QUALQUER <a>/<button> que direcione ao  -->
+<!-- WhatsApp (wa.me / whatsapp.com). Inclui o link do rodapé    -->
+<!-- "WhatsApp: (17) 99648-2578" — os botões "Negociar" das      -->
+<!-- linhas e "Negociar Pacote" já disparam o Lead inline.       -->
+<!-- Event delegation cobre também elementos dinâmicos.          -->
+<!-- Dispara ANTES do redirecionamento.                          -->
+<!-- =========================================================== -->
+<script>
+(function() {
+  function dispararLead() {
+    try {
+      if (typeof fbq === 'function') fbq('track', 'Lead');
+    } catch (e) {}
+  }
+
+  var leadDisparadoNoClique = false;
+  document.addEventListener('click', function(evt) {
+    if (leadDisparadoNoClique) return;
+    var el = evt.target && evt.target.closest ? evt.target.closest('a, button') : null;
+    if (!el) return;
+
+    // Evita dupla contagem: elementos que já disparam o Lead via onclick inline
+    var onclickInline = (el.getAttribute && el.getAttribute('onclick')) || '';
+    if (/fbq\s*\(\s*['"]track['"]\s*,\s*['"]Lead['"]/.test(onclickInline)) return;
+
+    var href = (el.getAttribute && el.getAttribute('href')) || '';
+
+    // 1) Links/botões diretos para o WhatsApp (wa.me ou whatsapp.com)
+    if (/wa\.me|whatsapp\.com/i.test(href)) {
+      dispararLead();
+      leadDisparadoNoClique = true;
+      return;
+    }
+
+    // 2) Atalhos de ação que levam ao simulador / formulário de cartas
+    if (el.tagName === 'A' && (href === '#simular' || href === '#simulador')) {
+      dispararLead();
+      leadDisparadoNoClique = true;
+    }
+  }, true);
+
+  document.addEventListener('click', function() {
+    setTimeout(function() { leadDisparadoNoClique = false; }, 50);
+  }, true);
+})();
+</script>
 </body>
 </html>
 

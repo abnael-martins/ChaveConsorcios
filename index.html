@@ -594,21 +594,59 @@
   <script>
     // Verifica se o usuário veio do WhatsApp (?origem=zap)
     const veioDoZap = new URLSearchParams(window.location.search).get('origem') === 'zap';
-
-    // Adiciona evento de Lead nos links do WhatsApp e ajusta a mensagem quando vier do zap
-    document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
-      // Dispara o evento de Lead no Pixel ao clicar
-      link.addEventListener('click', () => {
-        if (typeof fbq === 'function') fbq('track', 'Lead');
-      });
-
-      // Se veio do WhatsApp, ajusta as mensagens padrão para linguagem de continuação
-      if (veioDoZap && link.href.indexOf('text=') !== -1) {
-        // Se o link já tem texto, apenas não altera - os textos padrão são simples o suficiente
-      }
-    });
   </script>
 
+  <!-- =========================================================== -->
+  <!-- DISPARO GLOBAL DE EVENTO 'LEAD' NO META PIXEL               -->
+  <!-- Monitora cliques em QUALQUER <a>/<button> que direcione ao  -->
+  <!-- WhatsApp (wa.me / whatsapp.com) e nos atalhos de ação       -->
+  <!-- (#simular / #simulador). Event delegation cobre também      -->
+  <!-- elementos criados dinamicamente (tabelas, simulador).       -->
+  <!-- Dispara ANTES do redirecionamento.                          -->
+  <!-- =========================================================== -->
+  <script>
+  (function() {
+    // Helper: dispara o evento de conversão Lead
+    function dispararLead() {
+      try {
+        if (typeof fbq === 'function') fbq('track', 'Lead');
+      } catch (e) {}
+    }
+
+    // Previne cliques em cascata: controla se o Lead já foi disparado
+    // neste ciclo de evento para não contar 2x no mesmo clique.
+    var leadDisparadoNoClique = false;
+    document.addEventListener('click', function(evt) {
+      if (leadDisparadoNoClique) return;
+      var el = evt.target && evt.target.closest ? evt.target.closest('a, button') : null;
+      if (!el) return;
+
+      // Evita dupla contagem: elementos que já disparam o Lead via onclick inline
+      var onclickInline = (el.getAttribute && el.getAttribute('onclick')) || '';
+      if (/fbq\s*\(\s*['"]track['"]\s*,\s*['"]Lead['"]/.test(onclickInline)) return;
+
+      var href = (el.getAttribute && el.getAttribute('href')) || '';
+
+      // 1) Links/botões diretos para o WhatsApp (wa.me ou whatsapp.com)
+      if (/wa\.me|whatsapp\.com/i.test(href)) {
+        dispararLead();
+        leadDisparadoNoClique = true;
+        return;
+      }
+
+      // 2) Atalhos de ação que levam ao simulador / formulário de cartas
+      if (el.tagName === 'A' && (href === '#simular' || href === '#simulador')) {
+        dispararLead();
+        leadDisparadoNoClique = true;
+      }
+    }, true);
+
+    // Reseta o controle no próximo clique
+    document.addEventListener('click', function() {
+      setTimeout(function() { leadDisparadoNoClique = false; }, 50);
+    }, true);
+  })();
+  </script>
 </body>
 </html>
 
