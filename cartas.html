@@ -144,16 +144,21 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
   .filter-btn{ font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.06em; text-transform:uppercase; padding:9px 16px; border-radius:20px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; transition:all .25s ease; }
   .filter-btn.active, .filter-btn:hover{ border-color:var(--brass-light); color:var(--brass-light); }
 
-  .tickets{ display:grid; grid-template-columns:repeat(3, 1fr); gap:26px; }
-  .ticket{ position:relative; display:grid; grid-template-columns:1fr 78px; background:var(--surface); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:var(--shadow-lg); transition:transform .4s ease, border-color .4s ease; }
+  .tickets{ display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch; gap:26px; }
+  .ticket{ position:relative; flex:0 1 352px; max-width:100%; display:grid; grid-template-columns:1fr 78px; background:var(--surface); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:var(--shadow-lg); transition:transform .4s ease, border-color .4s ease; }
   .ticket:hover{ transform:translateY(-6px); border-color:rgba(192,139,62,0.5); }
   .ticket::before, .ticket::after{ content:""; position:absolute; left:calc(100% - 78px - 9px); width:18px; height:18px; border-radius:50%; background:var(--bg-alt); z-index:3; }
   .ticket::before{ top:-9px; }
   .ticket::after{ bottom:-9px; }
-  .ticket-main{ display:flex; flex-direction:column; }
+  .ticket-main{ display:flex; flex-direction:column; min-width:0; }
   .ticket-media{ position:relative; height:150px; overflow:hidden; background:#000; }
+  .ticket-media img{ width:100%; height:100%; object-fit:cover; display:block; }
   .ticket-media video{ width:100%; height:100%; object-fit:cover; opacity:0.9; }
-  .ticket-media .badge{ position:absolute; top:12px; left:12px; font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; background:rgba(12,25,29,0.75); border:1px solid rgba(244,236,221,0.3); padding:5px 10px; border-radius:20px; backdrop-filter:blur(4px); }
+  /* Selo de destaque editável — basta trocar o texto e a classe de cor no HTML */
+  .badge-destaque{ position:absolute; top:12px; left:12px; z-index:2; font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; background:rgba(12,25,29,0.75); border:1px solid rgba(244,236,221,0.3); padding:5px 10px; border-radius:20px; backdrop-filter:blur(4px); }
+  .badge-destaque.badge-ouro{ background:rgba(192,139,62,0.92); border-color:var(--brass-light); color:#20140a; }
+  .badge-destaque.badge-verde{ background:rgba(76,138,106,0.88); border-color:var(--emerald); color:var(--ivory); }
+  .badge-destaque.badge-vermelho{ background:rgba(182,66,63,0.88); border-color:var(--stamp); color:var(--ivory); }
   .ticket-body{ padding:20px 20px 22px; flex:1; display:flex; flex-direction:column; gap:14px; }
   .ticket-body h4{ font-size:1.12rem; }
   .ticket-data{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
@@ -161,6 +166,7 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
   .ticket-data .lbl{ font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:3px; }
   .ticket-data .val{ font-family:var(--font-mono); font-size:0.95rem; color:var(--ivory); }
   .ticket-data .val.brass{ color:var(--brass-light); }
+  .ticket-data .val.consulte{ color:var(--brass-light); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.02em; line-height:1.3; }
   .ticket-body .btn{ margin-top:auto; width:100%; }
   .ticket-stub{ border-left:1px dashed rgba(244,236,221,0.28); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; padding:14px 8px; background:repeating-linear-gradient(135deg, rgba(244,236,221,0.03) 0 10px, transparent 10px 20px); }
   .stub-stamp{ font-family:var(--font-mono); font-size:0.58rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--stamp); border:1.5px solid var(--stamp); border-radius:50%; width:56px; height:56px; display:flex; align-items:center; justify-content:center; text-align:center; transform:rotate(-14deg); mix-blend-mode:screen; line-height:1.05; padding:4px; }
@@ -247,7 +253,6 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
     .nav-links{ display:none; }
     .burger{ display:flex; }
     .steps{ grid-template-columns:repeat(2,1fr); }
-    .tickets{ grid-template-columns:repeat(2,1fr); }
     .gallery{ grid-template-columns:repeat(2,1fr); }
     .gallery.two{ grid-template-columns:1fr; }
     .benefits{ grid-template-columns:repeat(2,1fr); }
@@ -257,7 +262,6 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
   }
   @media (max-width: 600px){
     .steps{ grid-template-columns:1fr; }
-    .tickets{ grid-template-columns:1fr; }
     .gallery{ grid-template-columns:1fr; }
     .benefits{ grid-template-columns:1fr; }
     .field-row{ grid-template-columns:1fr; }
@@ -391,15 +395,25 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
     </div>
 
     <div class="tickets reveal">
-      <!-- Ticket 1 - veículo -->
+      <!-- ============================================================= -->
+      <!-- COMO ADICIONAR MAIS CARDS (até 12: 6 veículos + 6 imóveis):   -->
+      <!-- 1) Copie um bloco <div class="ticket" data-cat="..."> abaixo. -->
+      <!-- 2) data-cat="veiculo" ou data-cat="imovel" (usado no filtro). -->
+      <!-- 3) Mídia: use <img src="..." alt="..."> OU                   -->
+      <!--    <video autoplay loop muted playsinline>...</video>.        -->
+      <!-- 4) Selo: <span class="badge-destaque badge-ouro">Texto</span> -->
+      <!--    (cores: badge-ouro, badge-verde, badge-vermelho).          -->
+      <!-- 5) Entrada: valor numérico ou "Entre em contato para          -->
+      <!--    consultar" (classe .consulte).                             -->
+      <!-- 6) ID no .stub-code (ex.: CS-0000) — usado no WhatsApp.      -->
+      <!-- ============================================================= -->
+
+      <!-- Ticket 1 - veículo (imagem) -->
       <div class="ticket" data-cat="veiculo">
         <div class="ticket-main">
           <div class="ticket-media">
-            <!-- preload="none": o IntersectionObserver já gere o play/pause. Não é necessário pré-carregar. -->
-            <video class="amb-video" muted loop playsinline preload="none" poster="https://assets.mixkit.co/videos/74/74-thumb-360-0.jpg">
-              <source src="https://assets.mixkit.co/videos/74/74-360.mp4" type="video/mp4">
-            </video>
-            <span class="badge">Alta procura</span>
+            <img src="asset_car.png" alt="SUV Coupé 4x4">
+            <span class="badge-destaque badge-ouro">Alta procura</span>
           </div>
           <div class="ticket-body">
             <h4>SUV Coupé 4x4</h4>
@@ -407,9 +421,9 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
               <div><span class="lbl">Crédito</span><span class="val brass">R$ 218.000</span></div>
               <div><span class="lbl">Parcela</span><span class="val">R$ 2.245/mês</span></div>
               <div><span class="lbl">Restam</span><span class="val">76 parcelas</span></div>
-              <div><span class="lbl">Ágio</span><span class="val">R$ 129.900</span></div>
+              <div><span class="lbl">Entrada</span><span class="val">R$ 129.900</span></div>
             </div>
-            <a href="#simular" class="btn btn-ghost btn-sm">Quero essa carta</a>
+            <a href="#simular" class="btn btn-ghost btn-sm" data-wa-card>Quero essa carta</a>
           </div>
         </div>
         <div class="ticket-stub">
@@ -417,14 +431,14 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
           <div class="stub-code">CS-0074</div>
         </div>
       </div>
-      <!-- Ticket 2 - veículo -->
+      <!-- Ticket 2 - veículo (vídeo) -->
       <div class="ticket" data-cat="veiculo">
         <div class="ticket-main">
           <div class="ticket-media">
-            <video class="amb-video" muted loop playsinline preload="none" poster="https://assets.mixkit.co/videos/71/71-thumb-360-0.jpg">
+            <video class="amb-video" autoplay loop muted playsinline poster="https://assets.mixkit.co/videos/71/71-thumb-360-0.jpg">
               <source src="https://assets.mixkit.co/videos/71/71-360.mp4" type="video/mp4">
             </video>
-            <span class="badge">Disponível</span>
+            <span class="badge-destaque badge-verde">Disponível</span>
           </div>
           <div class="ticket-body">
             <h4>Sedã Executivo Híbrido</h4>
@@ -432,9 +446,9 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
               <div><span class="lbl">Crédito</span><span class="val brass">R$ 226.000</span></div>
               <div><span class="lbl">Parcela</span><span class="val">R$ 2.560/mês</span></div>
               <div><span class="lbl">Restam</span><span class="val">97 parcelas</span></div>
-              <div><span class="lbl">Ágio</span><span class="val">R$ 109.500</span></div>
+              <div><span class="lbl">Entrada</span><span class="val">R$ 109.500</span></div>
             </div>
-            <a href="#simular" class="btn btn-ghost btn-sm">Quero essa carta</a>
+            <a href="#simular" class="btn btn-ghost btn-sm" data-wa-card>Quero essa carta</a>
           </div>
         </div>
         <div class="ticket-stub">
@@ -442,14 +456,12 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
           <div class="stub-code">CS-0071</div>
         </div>
       </div>
-      <!-- Ticket 4 - imóvel -->
+      <!-- Ticket 3 - imóvel (imagem) -->
       <div class="ticket" data-cat="imovel">
         <div class="ticket-main">
           <div class="ticket-media">
-            <video class="amb-video" muted loop playsinline preload="none">
-              <source src="https://github.com/abnael-martins/ChaveConsorcios/releases/download/Midias/duplex.mp4" type="video/mp4">
-            </video>
-            <span class="badge">Exclusiva</span>
+            <img src="asset_house.png" alt="Apartamento Duplex — Alto Padrão">
+            <span class="badge-destaque badge-vermelho">Exclusiva</span>
           </div>
           <div class="ticket-body">
             <h4>Apartamento Duplex — Alto Padrão</h4>
@@ -457,9 +469,9 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
               <div><span class="lbl">Crédito</span><span class="val brass">R$ 1.350.000</span></div>
               <div><span class="lbl">Parcela</span><span class="val">R$ 8.176/mês</span></div>
               <div><span class="lbl">Restam</span><span class="val">188 parcelas</span></div>
-              <div><span class="lbl">Ágio</span><span class="val">R$ 662.000</span></div>
+              <div><span class="lbl">Entrada</span><span class="val consulte">Entre em contato para consultar</span></div>
             </div>
-            <a href="#simular" class="btn btn-ghost btn-sm">Quero essa carta</a>
+            <a href="#simular" class="btn btn-ghost btn-sm" data-wa-card>Quero essa carta</a>
           </div>
         </div>
         <div class="ticket-stub">
@@ -710,6 +722,42 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
   // Filtro de Destaques
   const filterBtns = document.querySelectorAll('#destaques .filter-btn');
   const tickets = document.querySelectorAll('.ticket');
+
+  // Ajusta a largura dos cards conforme a quantidade visível: com poucos
+  // cards, eles expandem e ficam centralizados — sem buracos nas laterais.
+  function ajustarLayoutCards(){
+    const visiveis = [...tickets].filter(t => t.style.display !== 'none').length;
+    tickets.forEach(t => {
+      if (visiveis === 1){
+        t.style.flex = '1 1 100%';
+        t.style.maxWidth = '620px';
+      } else if (visiveis === 2){
+        t.style.flex = '1 1 440px';
+        t.style.maxWidth = '560px';
+      } else {
+        t.style.flex = '0 1 352px';
+        t.style.maxWidth = '100%';
+      }
+    });
+  }
+
+  // Oculta as abas/filtros de categorias que não possuem nenhum card ativo
+  const catsPresentes = new Set(Array.from(tickets).map(t => t.dataset.cat));
+  filterBtns.forEach(btn => {
+    if (btn.dataset.filter !== 'all' && !catsPresentes.has(btn.dataset.filter)) {
+      btn.style.display = 'none';
+    }
+  });
+
+  // Se a aba ativa corresponder a uma categoria oculta, volta para "Todas"
+  const activeBtn = document.querySelector('#destaques .filter-btn.active');
+  if (activeBtn && activeBtn.style.display === 'none'){
+    activeBtn.classList.remove('active');
+    const allBtn = document.querySelector('#destaques .filter-btn[data-filter="all"]');
+    if (allBtn) allBtn.classList.add('active');
+    tickets.forEach(t => t.style.display = '');
+  }
+
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
@@ -718,8 +766,11 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
       tickets.forEach(t => {
         t.style.display = (f === 'all' || t.dataset.cat === f) ? '' : 'none';
       });
+      ajustarLayoutCards();
     });
   });
+
+  ajustarLayoutCards();
 
   document.querySelectorAll('.faq-item').forEach(item => {
     const q = item.querySelector('.faq-q');
@@ -770,6 +821,31 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
       window.open(`https://wa.me/${SEU_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
   }
 
+  // Botões "Quero essa carta" → WhatsApp com os dados da carta (Título, ID, Crédito, Entrada e Parcela) + Lead
+  document.querySelectorAll('.ticket .btn[data-wa-card]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const ticket = btn.closest('.ticket');
+      if (!ticket) return;
+
+      const titulo = (ticket.querySelector('.ticket-body h4') || {}).textContent.trim() || '';
+      const id = (ticket.querySelector('.stub-code') || {}).textContent.trim() || '';
+      const credito = (ticket.querySelector('.ticket-data div:nth-child(1) .val') || {}).textContent.trim() || '';
+      const parcela = (ticket.querySelector('.ticket-data div:nth-child(2) .val') || {}).textContent.trim() || '';
+      const entradaEl = ticket.querySelector('.ticket-data div:nth-child(4) .val');
+      const entrada = entradaEl ? entradaEl.textContent.trim() : '';
+
+      // Dispara evento de Lead no Pixel
+      if (typeof fbq === 'function') fbq('track', 'Lead');
+
+      const texto = veioDoZap
+        ? `Abnael, acabei de vir do nosso atendimento no WhatsApp e quero a carta abaixo:\n\n🏷️ *Título:* ${titulo}\n🔹 *ID:* ${id}\n💰 *Crédito:* ${credito}\n💸 *Entrada:* ${entrada}\n📅 *Parcela:* ${parcela}\n\nAinda está disponível?`
+        : `*Olá!* Estava a navegar no site e quero a carta abaixo:\n\n🏷️ *Título:* ${titulo}\n🔹 *ID:* ${id}\n💰 *Crédito:* ${credito}\n💸 *Entrada:* ${entrada}\n📅 *Parcela:* ${parcela}\n\nAinda está disponível?`;
+
+      window.open(`https://wa.me/${SEU_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
+    });
+  });
+
 })();
 </script>
 
@@ -799,6 +875,9 @@ src="https://www.facebook.com/tr?id=10202598127378950&ev=PageView&noscript=1"
       // Evita dupla contagem: elementos que já disparam o Lead via onclick inline
       var onclickInline = (el.getAttribute && el.getAttribute('onclick')) || '';
       if (/fbq\s*\(\s*['"]track['"]\s*,\s*['"]Lead['"]/.test(onclickInline)) return;
+
+      // Botões "Quero essa carta" (data-wa-card) disparam o Lead no próprio handler
+      if (el.hasAttribute && el.hasAttribute('data-wa-card')) return;
 
       var href = (el.getAttribute && el.getAttribute('href')) || '';
 
