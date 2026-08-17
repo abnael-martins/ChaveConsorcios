@@ -922,6 +922,30 @@ src="https://www.facebook.com/tr?id=1210336047943822&ev=PageView&noscript=1"
         font-family: 'Inter', system-ui, sans-serif;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         scroll-margin-top: 110px; /* Evita que o cabeçalho fixo cubra o topo do simulador */
+        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Efeito de brilho/pulse premium no simulador */
+    .simulador-container.animar-brilho {
+        animation: simulador-pulso-brilho 2.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    @keyframes simulador-pulso-brilho {
+        0% {
+            box-shadow: 0 0 0 0px rgba(192, 139, 62, 0), 0 20px 50px rgba(0, 0, 0, 0.6);
+            border-color: #c08b3e;
+            transform: scale(1);
+        }
+        10% {
+            box-shadow: 0 0 0 15px rgba(192, 139, 62, 0.5), 0 20px 50px rgba(192, 139, 62, 0.25);
+            border-color: var(--brass-light);
+            transform: scale(1.015);
+        }
+        100% {
+            box-shadow: 0 0 0 0px rgba(192, 139, 62, 0), 0 20px 50px rgba(0, 0, 0, 0.6);
+            border-color: #c08b3e;
+            transform: scale(1);
+        }
     }
 
     .simulador-header {
@@ -1835,6 +1859,38 @@ src="https://www.facebook.com/tr?id=1210336047943822&ev=PageView&noscript=1"
       closeMenu.addEventListener('click', () => mobileMenu.classList.remove('open'));
       mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
     }
+
+    // Trigger do efeito visual do simulador ao clicar em atalhos
+    function dispararEfeitoSimulador() {
+      var simulador = document.getElementById('simulador');
+      if (!simulador) return;
+      
+      // Reinicia animação removendo e forçando reflow
+      simulador.classList.remove('animar-brilho');
+      void simulador.offsetWidth; 
+      simulador.classList.add('animar-brilho');
+      
+      setTimeout(function() {
+        simulador.classList.remove('animar-brilho');
+      }, 2200);
+    }
+
+    // Monitora cliques em atalhos para o simulador
+    document.addEventListener('click', function(evt) {
+      var el = evt.target && evt.target.closest ? evt.target.closest('a') : null;
+      if (!el) return;
+      var href = el.getAttribute('href') || '';
+      if (href === '#simulador' || href === '#simular') {
+        dispararEfeitoSimulador();
+      }
+    }, true);
+
+    // Monitora carregamento inicial com hash do simulador
+    window.addEventListener('load', function() {
+      if (window.location.hash === '#simulador' || window.location.hash === '#simular') {
+        setTimeout(dispararEfeitoSimulador, 600);
+      }
+    });
   </script>
 
   <!-- =========================================================== -->
