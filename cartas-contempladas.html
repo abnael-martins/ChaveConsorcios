@@ -121,7 +121,8 @@ src="https://www.facebook.com/tr?id=1210336047943822&ev=PageView&noscript=1"
       overflow-x: auto; /* Ativa scroll horizontal apenas no mobile */
     }
     table.planilha th {
-      position: static; /* Evita o bug de sobreposição no mobile */
+      position: sticky; /* Mantém sticky no mobile também */
+      top: 144px; /* Fica logo abaixo da barra de filtros fixada */
     }
   }
   table.planilha td{padding:12px 16px;border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:0.82rem;color:var(--ivory);white-space:nowrap;}
