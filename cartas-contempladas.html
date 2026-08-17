@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -66,15 +66,64 @@ src="https://www.facebook.com/tr?id=1210336047943822&ev=PageView&noscript=1"
   .nav-links a:hover{color:var(--brass-light);}
 
   /* Filtros */
-  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+  .filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    position: sticky;
+    top: 88px; /* Logo abaixo do cabeçalho fixo */
+    z-index: 99;
+    background: var(--bg);
+    padding: 12px 0;
+    margin-top: -12px;
+  }
   .filter-btn{font-family:var(--font-mono);font-size:0.75rem;letter-spacing:0.06em;text-transform:uppercase;padding:9px 18px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;transition:all .25s ease;}
   .filter-btn.active,.filter-btn:hover{border-color:var(--brass-light);color:var(--brass-light);}
   .filter-btn.active{background:rgba(192,139,62,0.1);}
 
+  @media (max-width: 400px) {
+    .filters {
+      gap: 6px;
+    }
+    .filter-btn {
+      padding: 7px 14px;
+      font-size: 0.7rem;
+    }
+  }
+
   /* Tabela */
-  .container-tabela{overflow-x:auto;border-radius:10px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow-lg);}
+  .container-tabela {
+    overflow-x: visible; /* Permite o funcionamento do sticky header vertical no desktop */
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    box-shadow:var(--shadow-lg);
+  }
   table.planilha{width:100%;min-width:900px;border-collapse:collapse;text-align:left;}
-  table.planilha th{background:var(--bg-alt);color:var(--brass-light);font-family:var(--font-display);padding:14px 16px;font-size:0.8rem;letter-spacing:0.06em;text-transform:uppercase;border-bottom:1px solid var(--line);white-space:nowrap;}
+  table.planilha th {
+    position: sticky;
+    top: 144px; /* Fica logo abaixo da barra de filtros fixada */
+    z-index: 98;
+    background: var(--bg-alt);
+    color: var(--brass-light);
+    font-family: var(--font-display);
+    padding: 14px 16px;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 980px) {
+    .container-tabela {
+      overflow-x: auto; /* Ativa scroll horizontal apenas no mobile */
+    }
+    table.planilha th {
+      position: static; /* Evita o bug de sobreposição no mobile */
+    }
+  }
   table.planilha td{padding:12px 16px;border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:0.82rem;color:var(--ivory);white-space:nowrap;}
   table.planilha tbody tr:last-child td{border-bottom:none;}
   table.planilha tbody tr:hover{background:var(--surface-2);}
@@ -129,6 +178,57 @@ src="https://www.facebook.com/tr?id=1210336047943822&ev=PageView&noscript=1"
   }
   @media (max-width: 600px){
     .footer-grid{ grid-template-columns:1fr; }
+  }
+
+  /* Estilização para destaques no campo Entrada */
+  .entrada-destaque {
+    background: rgba(192, 139, 62, 0.15); /* Cor latão */
+    color: var(--brass-light);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    border: 1px solid rgba(192, 139, 62, 0.4);
+    display: inline-block;
+    white-space: nowrap;
+    font-family: var(--font-body);
+    font-weight: 500;
+  }
+  .entrada-destaque-baixo {
+    background: rgba(76, 138, 106, 0.15); /* Esmeralda/Verde */
+    color: #6ec897;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    border: 1px solid rgba(76, 138, 106, 0.4);
+    display: inline-block;
+    white-space: nowrap;
+    font-family: var(--font-body);
+    font-weight: 500;
+  }
+  .entrada-destaque-especial {
+    background: rgba(182, 66, 63, 0.15); /* Coral/Vermelho */
+    color: #e07a77;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    border: 1px solid rgba(182, 66, 63, 0.4);
+    display: inline-block;
+    white-space: nowrap;
+    font-family: var(--font-body);
+    font-weight: 500;
+  }
+  .entrada-destaque-mensagem {
+    background: rgba(147, 168, 172, 0.1); /* Muted / Cinza */
+    color: var(--muted);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    border: 1px solid rgba(147, 168, 172, 0.3);
+    display: inline-block;
+    white-space: nowrap;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-weight: 500;
   }
 </style>
 </head>
@@ -387,10 +487,69 @@ var pagAtual = 0;
 // Verifica se o usuário veio do WhatsApp (?origem=zap)
 var veioDoZap = new URLSearchParams(window.location.search).get('origem') === 'zap';
 
+// =====================================================================
+// CONFIGURAÇÃO DE DESTAQUES PARA O CAMPO 'ENTRADA'
+// =====================================================================
+// Configure aqui mensagens personalizadas para a Entrada de IDs específicos.
+// Exemplos de destaques sugeridos:
+//   "9015": "Entre em contato/Super desconto",
+//   "9253": "Entrada baixa",
+//   "9179": "Desconto especial"
+var destaquesEntrada = {
+  // Adicione os IDs das cartas e as mensagens de destaque aqui:
+  "9015": "Super desconto",
+  "9253": "Entrada baixa",
+  "9179": "Desconto especial"
+};
+
+// Se desejar forçar que TODAS as cartas mostrem a mensagem "Entre em contato para consultar",
+// mude para true:
+var forcarMensagemGlobal = true;
+var mensagemGlobalEntrada = "Entre em contato para consultar";
+
+// Funções utilitárias para Entrada com destaques
+function getEntradaTexto(carta) {
+  if (forcarMensagemGlobal) {
+    return mensagemGlobalEntrada;
+  }
+  if (destaquesEntrada && typeof destaquesEntrada[carta.i] !== 'undefined') {
+    return destaquesEntrada[carta.i];
+  }
+  return carta.e;
+}
+
+function isEntradaNumerica(carta) {
+  if (forcarMensagemGlobal) return false;
+  if (destaquesEntrada && typeof destaquesEntrada[carta.i] !== 'undefined') return false;
+  
+  // Se for um texto qualquer que não seja numérico
+  var num = toNum(carta.e);
+  return num > 0;
+}
+
+function getEntradaHTML(carta) {
+  var texto = getEntradaTexto(carta);
+  if (!isEntradaNumerica(carta)) {
+    var txtLower = texto.toLowerCase();
+    var classe = 'entrada-destaque-mensagem';
+    
+    if (txtLower.indexOf('baixo') >= 0) {
+      classe = 'entrada-destaque-baixo';
+    } else if (txtLower.indexOf('especial') >= 0 || txtLower.indexOf('super') >= 0 || txtLower.indexOf('desconto') >= 0) {
+      classe = 'entrada-destaque-especial';
+    } else if (txtLower.indexOf('contato') >= 0 || txtLower.indexOf('consultar') >= 0) {
+      classe = 'entrada-destaque';
+    }
+    return '<span class="' + classe + '">' + texto + '</span>';
+  }
+  return '<strong>' + texto + '</strong>';
+}
+
 function buildLink(carta) {
+  var entradaTexto = getEntradaTexto(carta);
   var msg = veioDoZap
-    ? 'Abnael, acabei de vir do nosso atendimento no WhatsApp e vi no site a carta de ' + carta.c + ' (ID: ' + carta.i + ') com Crédito de ' + carta.cr + ' e Entrada de ' + carta.e + '. Ainda está disponível?'
-    : 'Olá Martins! Vi no site a carta de ' + carta.c + ' (ID: ' + carta.i + ') com Crédito de ' + carta.cr + ' e Entrada de ' + carta.e + '. Ainda está disponível?';
+    ? 'Abnael, acabei de vir do nosso atendimento no WhatsApp e vi no site a carta de ' + carta.c + ' (ID: ' + carta.i + ') com Crédito de ' + carta.cr + ' e Entrada de ' + entradaTexto + '. Ainda está disponível?'
+    : 'Olá Martins! Vi no site a carta de ' + carta.c + ' (ID: ' + carta.i + ') com Crédito de ' + carta.cr + ' e Entrada de ' + entradaTexto + '. Ainda está disponível?';
   return 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
 }
 
@@ -417,7 +576,7 @@ function renderTabela() {
       '<td><strong>' + c.i + '</strong></td>' +
       '<td>' + c.c + '</td>' +
       '<td class="destaque-Crédito">' + c.cr + '</td>' +
-      '<td><strong>' + c.e + '</strong></td>' +
+      '<td>' + getEntradaHTML(c) + '</td>' +
       '<td>' + c.p + '</td>' +
       '<td>' + c.pa + '</td>' +
       '<td>' + c.a + '</td>' +
@@ -509,14 +668,32 @@ function atualizarSoma() {
   barra.style.display = 'flex';
 
   var tCred = 0, tEnt = 0, tPar = 0;
+  var temEntradaTexto = false;
   for (var i = 0; i < ids.length; i++) {
     var c = selecionadas[ids[i]];
-    tCred += toNum(c.cr); tEnt += toNum(c.e); tPar += toNum(c.pa);
+    tCred += toNum(c.cr);
+    tPar += toNum(c.pa);
+    
+    if (isEntradaNumerica(c)) {
+      tEnt += toNum(c.e);
+    } else {
+      temEntradaTexto = true;
+    }
   }
 
   document.getElementById('soma-qtd').innerText     = ids.length;
   document.getElementById('soma-Crédito').innerText = fmtBRL(tCred);
-  document.getElementById('soma-entrada').innerText = fmtBRL(tEnt);
+  
+  if (temEntradaTexto) {
+    if (tEnt > 0) {
+      document.getElementById('soma-entrada').innerText = fmtBRL(tEnt) + ' + A consultar';
+    } else {
+      document.getElementById('soma-entrada').innerText = 'A consultar';
+    }
+  } else {
+    document.getElementById('soma-entrada').innerText = fmtBRL(tEnt);
+  }
+  
   document.getElementById('soma-parcela').innerText = fmtBRL(tPar);
 }
 
@@ -531,9 +708,17 @@ window.enviarPacote = function() {
   if (typeof fbq === 'function') fbq('track', 'Lead');
 
   var tCred = 0, tEnt = 0, tPar = 0;
+  var temEntradaTexto = false;
   for (var i = 0; i < ids.length; i++) {
     var c = selecionadas[ids[i]];
-    tCred += toNum(c.cr); tEnt += toNum(c.e); tPar += toNum(c.pa);
+    tCred += toNum(c.cr);
+    tPar += toNum(c.pa);
+    
+    if (isEntradaNumerica(c)) {
+      tEnt += toNum(c.e);
+    } else {
+      temEntradaTexto = true;
+    }
   }
 
   var texto = veioDoZap
@@ -542,9 +727,16 @@ window.enviarPacote = function() {
   for (var j = 0; j < ids.length; j++) {
     var carta = selecionadas[ids[j]];
     var disp  = carta.d === 'R' ? 'Reservada' : 'Disponível';
-    texto += '[*] *ID:* ' + carta.i + ' (' + carta.c + ') - _' + disp + '_\n   Crédito: ' + carta.cr + '\n   Entrada: ' + carta.e + '\n\n';
+    var entradaTexto = getEntradaTexto(carta);
+    texto += '[*] *ID:* ' + carta.i + ' (' + carta.c + ') - _' + disp + '_\n   Crédito: ' + carta.cr + '\n   Entrada: ' + entradaTexto + '\n\n';
   }
-  texto += '=== *RESUMO DO PACOTE:*\n Crédito Total: ' + fmtBRL(tCred) + '\n Entrada Total: ' + fmtBRL(tEnt) + '\n Parcelas: ' + fmtBRL(tPar) + '\n\nPodemos conversar?';
+  
+  var entradaTotalTexto = fmtBRL(tEnt);
+  if (temEntradaTexto) {
+    entradaTotalTexto = tEnt > 0 ? fmtBRL(tEnt) + ' + A consultar' : 'A consultar';
+  }
+  
+  texto += '=== *RESUMO DO PACOTE:*\n Crédito Total: ' + fmtBRL(tCred) + '\n Entrada Total: ' + entradaTotalTexto + '\n Parcelas: ' + fmtBRL(tPar) + '\n\nPodemos conversar?';
 
   window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(texto), '_blank');
 };
