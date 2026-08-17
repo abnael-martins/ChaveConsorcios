@@ -101,9 +101,14 @@ src="https://www.facebook.com/tr?id=1210336047943822&ev=PageView&noscript=1"
     box-shadow:var(--shadow-lg);
   }
   table.planilha{width:100%;min-width:900px;border-collapse:collapse;text-align:left;}
+  table.planilha thead {
+    position: relative;
+    z-index: 98;
+    will-change: transform;
+  }
   table.planilha th {
     position: sticky;
-    top: 144px; /* Fica logo abaixo da barra de filtros fixada */
+    top: 144px; /* Fica logo abaixo da barra de filtros fixada no desktop */
     z-index: 98;
     background: var(--bg-alt);
     color: var(--brass-light);
@@ -121,8 +126,7 @@ src="https://www.facebook.com/tr?id=1210336047943822&ev=PageView&noscript=1"
       overflow-x: auto; /* Ativa scroll horizontal apenas no mobile */
     }
     table.planilha th {
-      position: sticky; /* Mantém sticky no mobile também */
-      top: 144px; /* Fica logo abaixo da barra de filtros fixada */
+      position: static; /* No mobile a fixação vertical é sincronizada dinamicamente com a barra de filtros */
     }
   }
   table.planilha td{padding:12px 16px;border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:0.82rem;color:var(--ivory);white-space:nowrap;}
@@ -743,9 +747,59 @@ window.enviarPacote = function() {
 };
 
 // =====================================================================
-// INICIALIZACAO -- sem espera, dados já disponíveis
+// INICIALIZACAO & FIXACAO DINAMICA DO CABECALHO NO MOBILE
 // =====================================================================
 renderTabela();
+
+(function setupStickyTableHeadMobile() {
+  var thead = document.querySelector('table.planilha thead');
+  var container = document.querySelector('.container-tabela');
+  var filters = document.querySelector('.filters');
+  if (!thead || !container || !filters) return;
+
+  var ticking = false;
+  function updateStickyHead() {
+    ticking = false;
+    // No PC (> 980px), o CSS nativo (position: sticky; top: 144px) cuida perfeitamente
+    if (window.innerWidth > 980) {
+      thead.style.transform = '';
+      return;
+    }
+    var fRect = filters.getBoundingClientRect();
+    var cRect = container.getBoundingClientRect();
+    var headHeight = thead.offsetHeight || 45;
+    var maxOffset = container.offsetHeight - headHeight - 50;
+
+    var targetTop = fRect.bottom;
+    var currentTop = cRect.top;
+
+    if (currentTop < targetTop) {
+      var diff = targetTop - currentTop;
+      diff = Math.max(0, Math.min(diff, maxOffset));
+      thead.style.transform = 'translateY(' + diff + 'px)';
+    } else {
+      thead.style.transform = 'translateY(0px)';
+    }
+  }
+
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateStickyHead);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  window.addEventListener('resize', updateStickyHead, { passive: true });
+  
+  // Garante atualização ao filtrar ou mudar página
+  var origRenderTabela = window.renderTabela;
+  window.renderTabela = function() {
+    if (typeof origRenderTabela === 'function') {
+      origRenderTabela.apply(this, arguments);
+    }
+    updateStickyHead();
+  };
+})();
 </script>
 
 <!-- =========================================================== -->
